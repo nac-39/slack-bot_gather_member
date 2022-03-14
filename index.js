@@ -143,7 +143,7 @@ app.action("getup_action", async ({ ack }) => {
     Object.keys(game.players).forEach((e) => {
       gamePlayersList.push(game.getPlayer(e));
     });
-    process.env.TS = await updateSlack(gamePlayersList, TS);
+    process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
   }, 5000);
 });
 
