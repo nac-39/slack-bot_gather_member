@@ -113,7 +113,7 @@ const onConnected = (connected) => {
 const { App } = Slack;
 dotenv.config();
 global.WebSocket = webSocket;
-var TS = "";
+
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -127,7 +127,7 @@ const app = new App({
   // Start your app
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
-  TS = await firstPost();
+  process.env.TS = await firstPost();
 })();
 
 const game = new Game(process.env.SPACE_ID, () =>
@@ -143,7 +143,7 @@ app.action("getup_action", async ({ ack }) => {
     Object.keys(game.players).forEach((e) => {
       gamePlayersList.push(game.getPlayer(e));
     });
-    TS = await updateSlack(gamePlayersList, TS);
+    process.env.TS = await updateSlack(gamePlayersList, TS);
   }, 5000);
 });
 
@@ -154,7 +154,7 @@ game.subscribeToEvent("playerJoins", (player) => {
     Object.keys(game.players).forEach((e) => {
       gamePlayersList.push(game.getPlayer(e));
     });
-    TS = await updateSlack(gamePlayersList, TS);
+    process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
   }, 5000);
 });
 
@@ -165,6 +165,6 @@ game.subscribeToEvent("playerExits", (player) => {
     Object.keys(game.players).forEach((e) => {
       gamePlayersList.push(game.getPlayer(e));
     });
-    TS = await updateSlack(gamePlayersList, TS);
+    process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
   }, 5000);
 });
