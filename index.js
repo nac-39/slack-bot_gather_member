@@ -70,21 +70,21 @@ const generateBlocks = (playersList, timeStamp) => {
       blocks.push(section);
     }
   });
-  blocks.push({
-    type: "actions",
-    elements: [
-      {
-        type: "button",
-        text: {
-          type: "plain_text",
-          text: "botを起こす",
-          emoji: true,
-        },
-        value: "getup",
-        action_id: "getup_action",
-      },
-    ],
-  });
+  // blocks.push({
+  //   type: "actions",
+  //   elements: [
+  //     {
+  //       type: "button",
+  //       text: {
+  //         type: "plain_text",
+  //         text: "botを起こす",
+  //         emoji: true,
+  //       },
+  //       value: "getup",
+  //       action_id: "getup_action",
+  //     },
+  //   ],
+  // });
 
   blocks.push({
     type: "context",
