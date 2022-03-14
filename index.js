@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import webSocket from "isomorphic-ws";
 
 const updateSlack = async (playersList, tsts) => {
-  var BLOCKS = generateBlocks(playersList);
+  var BLOCKS = generateBlocks(playersList, tsts);
   console.log(BLOCKS);
   try {
     var result = await app.client.chat.update({
@@ -40,26 +40,62 @@ const genImage = (outfitJson) => {
 };
 
 // Slackを更新する時の本文を生成する
-const generateBlocks = (playersList) => {
+const generateBlocks = (playersList, timeStamp) => {
   var blocks = [];
+  let dateTime = new Date(timeStamp * 1000 + 32400000);
+  // gatherにいる人を追加していく
   playersList.forEach((player) => {
-    if (player) {
+    console.log(player);
+    if (player && player.name != "slack_botくん") {
       var section = {
         type: "section",
         accessory: {
           type: "image",
-          image_url: `${player.outfitString?genImage(JSON.parse(player.outfitString)):"https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png"}`,
+          image_url: `${
+            player.outfitString
+              ? genImage(JSON.parse(player.outfitString))
+              : "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png"
+          }`,
           alt_text: `${player.name}`,
         },
         text: {
           type: "mrkdwn",
-          text: `${player.name} ${
+          text: `*${player.name}* ${
             player.emojiStatus ? player.emojiStatus : ""
-          }`,
+          }${
+            player.openToConversation ? ":speaker:" : ":mute:"
+          }\n:speech_balloon:${player.textStatus}`,
         },
       };
       blocks.push(section);
     }
+  });
+  blocks.push({
+    type: "actions",
+    elements: [
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "botを起こす",
+          emoji: true,
+        },
+        value: "getup",
+        action_id: "getup_action",
+      },
+    ],
+  });
+
+  blocks.push({
+    type: "context",
+    elements: [
+      {
+        type: "mrkdwn",
+        text: `Last Update: ${dateTime.toLocaleTimeString(
+          "ja-JP"
+        )} ${dateTime.toLocaleDateString()}`,
+      },
+    ],
   });
   return blocks;
 };
@@ -99,6 +135,18 @@ const game = new Game(process.env.SPACE_ID, () =>
 );
 game.connect();
 game.subscribeToConnection(onConnected);
+
+// action_id が "approve_button" のインタラクティブコンポーネントがトリガーされる毎にミドルウェアが呼び出される
+app.action("getup_action", async ({ ack }) => {
+  await ack();
+  setTimeout(async () => {
+    Object.keys(game.players).forEach((e) => {
+      gamePlayersList.push(game.getPlayer(e));
+    });
+    TS = await updateSlack(gamePlayersList, TS);
+  }, 5000);
+});
+
 game.subscribeToEvent("playerJoins", (player) => {
   console.log("playerJoined", player);
   var gamePlayersList = Array();
