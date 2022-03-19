@@ -1,3 +1,4 @@
+
 import { Game } from "@gathertown/gather-game-client";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
@@ -110,42 +111,31 @@ const app = new App({
   // Start your app
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
-  try{
-    process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
-  }catch(error){
-    process.env.TS = await firstPost();
-  };
-  }
-)
+  process.env.TS = await firstPost();
+})();
 
+// gatherのgameクラス初期化
 const game = new Game(process.env.SPACE_ID, () =>
   Promise.resolve({ apiKey: process.env.API_KEY })
 );
 game.connect();
 game.subscribeToConnection(onConnected);
 
-// action_id が "approve_button" のインタラクティブコンポーネントがトリガーされる毎にミドルウェアが呼び出される
-app.action("getup_action", async ({ ack }) => {
-  await ack();
-  setTimeout(async () => {
-    Object.keys(game.players).forEach((e) => {
-      gamePlayersList.push(game.getPlayer(e));
-    });
-    process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
-  }, 5000);
-});
-
+// websocketを使ってプレイヤーが入ってくるイベントを監視してる
 game.subscribeToEvent("playerJoins", (player) => {
   console.log("playerJoined", player);
   var gamePlayersList = Array();
   setTimeout(async () => {
     Object.keys(game.players).forEach((e) => {
+      // e: playerのID
       gamePlayersList.push(game.getPlayer(e));
     });
+  // websocketを使ってプレイヤーが入ってくるイベントを監視してる
     process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
-  }, 5000);
+  }, 5000);// プレイヤーが入室してからgame.playersに反映されるのに少し時間がかかる
 });
 
+// websocketを使ってプレイヤーが出ていくイベントを監視してる
 game.subscribeToEvent("playerExits", (player) => {
   console.log("playerExited", player);
   var gamePlayersList = Array();
@@ -153,6 +143,7 @@ game.subscribeToEvent("playerExits", (player) => {
     Object.keys(game.players).forEach((e) => {
       gamePlayersList.push(game.getPlayer(e));
     });
+    // タイムスタンプを更新すると共にslackの投稿を更新する
     process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
   }, 5000);
 });
