@@ -42,7 +42,7 @@ const genImage = (outfitJson) => {
 // Slackを更新する時の本文を生成する
 const generateBlocks = (playersList, timeStamp) => {
   var blocks = [];
-  let dateTime = new Date(timeStamp * 1000 + 32400000);
+  let dateTime = new Date(Date.now() + 32400000);
   // gatherにいる人を追加していく
   playersList.forEach((player) => {
     console.log(player);
@@ -61,30 +61,13 @@ const generateBlocks = (playersList, timeStamp) => {
         text: {
           type: "mrkdwn",
           text: `*${player.name}* ${
-            player.emojiStatus ? player.emojiStatus : ""
-          }${
-            player.openToConversation ? ":speaker:" : ":mute:"
+            player.emojiStatus ? ":" + player.emojiStatus + ":" : ""
           }\n:speech_balloon:${player.textStatus}`,
         },
       };
       blocks.push(section);
     }
   });
-  // blocks.push({
-  //   type: "actions",
-  //   elements: [
-  //     {
-  //       type: "button",
-  //       text: {
-  //         type: "plain_text",
-  //         text: "botを起こす",
-  //         emoji: true,
-  //       },
-  //       value: "getup",
-  //       action_id: "getup_action",
-  //     },
-  //   ],
-  // });
 
   blocks.push({
     type: "context",
@@ -127,8 +110,13 @@ const app = new App({
   // Start your app
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
-  process.env.TS = await firstPost();
-})();
+  try{
+    process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
+  }catch(error){
+    process.env.TS = await firstPost();
+  };
+  }
+)
 
 const game = new Game(process.env.SPACE_ID, () =>
   Promise.resolve({ apiKey: process.env.API_KEY })
