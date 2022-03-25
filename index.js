@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import webSocket from "isomorphic-ws";
 
 const updateSlack = async (playersList, tsts) => {
-  var BLOCKS = generateBlocks(playersList, tsts);
+  const BLOCKS = generateBlocks(playersList, tsts);
   console.log(BLOCKS);
   try {
     var result = await app.client.chat.update({
@@ -17,6 +17,11 @@ const updateSlack = async (playersList, tsts) => {
     return result.ts;
   } catch (error) {
     console.error(error);
+    var result = await app.client.chat.update({
+      channel: process.env.SLACK_CHANNEL_ID,
+      ts: tsts,
+      text: "エラーで更新できませんでした><"
+    });
   }
 };
 
@@ -32,6 +37,7 @@ const firstPost = async () => {
     return result.ts;
   } catch (error) {
     console.error(error);
+    return error;
   }
 };
 // 各パーツの画像を合成してgatherのアイコンを生成する予定

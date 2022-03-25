@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@gathertown/gather-game-client": "^35.1.0",
+    "@gathertown/gather-game-client": "^36.0.2",
     "@slack/bolt": "^3.10.0",
     "dotenv": "^16.0.0",
     "isomorphic-ws": "^4.0.1"
