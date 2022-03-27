@@ -1,5 +1,3 @@
-hello-bolt/*
-serverless.yml
 src/
 node_modules/
 Dockerfile
