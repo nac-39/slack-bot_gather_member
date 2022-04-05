@@ -1,4 +1,3 @@
-
 import { Game } from "@gathertown/gather-game-client";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
@@ -20,7 +19,7 @@ const updateSlack = async (playersList, tsts) => {
     var result = await app.client.chat.update({
       channel: process.env.SLACK_CHANNEL_ID,
       ts: tsts,
-      text: "エラーで更新できませんでした><"
+      text: "エラーで更新できませんでした><",
     });
   }
 };
@@ -31,7 +30,7 @@ const firstPost = async () => {
   try {
     const result = await app.client.chat.postMessage({
       channel: process.env.SLACK_CHANNEL_ID,
-      text: "そのうち更新されます……",
+      text: "これはテストです．そのうち更新されます……",
     });
     console.log(result);
     return result.ts;
@@ -104,7 +103,6 @@ const { App } = Slack;
 dotenv.config();
 global.WebSocket = webSocket;
 
-
 // Initializes your app with your bot token and signing secret
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -129,21 +127,34 @@ game.subscribeToConnection(onConnected);
 
 // websocketを使ってプレイヤーが入ってくるイベントを監視してる
 game.subscribeToEvent("playerJoins", (player) => {
-  console.log("playerJoined", player);
+  console.log("playerJoined");
   var gamePlayersList = Array();
   setTimeout(async () => {
     Object.keys(game.players).forEach((e) => {
       // e: playerのID
       gamePlayersList.push(game.getPlayer(e));
     });
-  // websocketを使ってプレイヤーが入ってくるイベントを監視してる
+    // websocketを使ってプレイヤーが入ってくるイベントを監視してる
     process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
-  }, 5000);// プレイヤーが入室してからgame.playersに反映されるのに少し時間がかかる
+  }, 5000); // プレイヤーが入室してからgame.playersに反映されるのに少し時間がかかる
 });
 
 // websocketを使ってプレイヤーが出ていくイベントを監視してる
 game.subscribeToEvent("playerExits", (player) => {
-  console.log("playerExited", player);
+  console.log("playerExited");
+  var gamePlayersList = Array();
+  setTimeout(async () => {
+    Object.keys(game.players).forEach((e) => {
+      gamePlayersList.push(game.getPlayer(e));
+    });
+    // タイムスタンプを更新すると共にslackの投稿を更新する
+    process.env.TS = await updateSlack(gamePlayersList, process.env.TS);
+  }, 5000);
+}); 
+
+// websocketを使ってプレイヤーがテキストステータスを変えるイベントを監視してる
+game.subscribeToEvent("playerSetsTextStatus", (player) => {
+  console.log("player sets text status");
   var gamePlayersList = Array();
   setTimeout(async () => {
     Object.keys(game.players).forEach((e) => {
