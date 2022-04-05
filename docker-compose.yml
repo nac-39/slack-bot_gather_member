@@ -1,0 +1,11 @@
+version: "3"
+services: 
+  app: 
+    build: .
+    container_name: jack-node-gather-who
+    volumes:
+    - ".:/home"
+    ports:
+    - "8000:8000"
+    - "3000:3000"
+    stdin_open: true
