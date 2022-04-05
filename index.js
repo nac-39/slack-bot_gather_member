@@ -115,7 +115,10 @@ const app = new App({
   // Start your app
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
-  process.env.TS = await firstPost();
+  if(!process.env.TS){
+    process.env.TS = await firstPost();  
+  }
+
 })();
 
 // gatherのgameクラス初期化
