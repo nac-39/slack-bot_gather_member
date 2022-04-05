@@ -56,10 +56,17 @@ npm install
 node index.js
 ```
 
-## 5. herokuに上げる場合
-Procfile↓
+## 5-1. herokuに上げる場合
+Procfile↓に以下を記述してください．
 ```Procfile
 worker: node index.js
+```
+
+## 5-2. Dockerのコンテナでお試し実行する場合
+```bash
+$ docker-compose up -d
+$ docker-compose exec app sh
+# node index.js
 ```
 
 ## 参考
