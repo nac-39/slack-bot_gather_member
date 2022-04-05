@@ -30,7 +30,7 @@ const firstPost = async () => {
   try {
     const result = await app.client.chat.postMessage({
       channel: process.env.SLACK_CHANNEL_ID,
-      text: "これはテストです．そのうち更新されます……",
+      text: "そのうち更新されます……",
     });
     console.log(result);
     return result.ts;
