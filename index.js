@@ -45,7 +45,8 @@ const firstPost = async () => {
 // 各パーツの画像を合成してgatherのアイコンを生成する予定
 // 今は顔（髪なし）をかえすだけ
 const genImage = (outfitJson) => {
-  return outfitJson.skin.previewUrl;
+  if(outfitJson.skin.previewUrl) return outfitJson.skin.previewUrl;
+  else return "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png"
 };
 
 // Slackを更新する時の本文を生成する
