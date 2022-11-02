@@ -2,6 +2,7 @@ import { Game } from "@gathertown/gather-game-client";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
 import webSocket from "isomorphic-ws";
+import http from "http";
 
 // gatherに常駐しているbotの名前
 const GATHER_BOT_NAME = "slack_botくん";
@@ -169,3 +170,12 @@ game.subscribeToEvent("playerSetsEmojiStatus", (player) => {
   console.log("player sets emoji status");
   updateInfo();
 });
+
+http
+  .createServer(function (req, res) {
+    req.on("end", function () {
+      updateInfo();
+      res.end();
+    });
+  })
+  .listen(process.env.PORT);
