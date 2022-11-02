@@ -45,8 +45,8 @@ const firstPost = async () => {
 // 各パーツの画像を合成してgatherのアイコンを生成する予定
 // 今は顔（髪なし）をかえすだけ
 const genImage = (outfitJson) => {
-  if(outfitJson.skin.previewUrl) return outfitJson.skin.previewUrl;
-  else return "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png"
+  if (outfitJson.skin.previewUrl) return outfitJson.skin.previewUrl;
+  else return "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png";
 };
 
 // Slackを更新する時の本文を生成する
@@ -61,35 +61,41 @@ const generateBlocks = (playersList, timeStamp) => {
         type: "section",
         accessory: {
           type: "image",
-          image_url: `${
-            player.outfitString
-              ? genImage(JSON.parse(player.outfitString))
-              : "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png"
-          }`,
+          image_url: `${player.outfitString ? genImage(JSON.parse(player.outfitString)) : "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png"}`,
           alt_text: `${player.name}`,
         },
         text: {
           type: "mrkdwn",
-          text: `*${player.name}* ${
-            player.emojiStatus ? " " + player.emojiStatus : ""
-          }\n:speech_balloon: ${player.textStatus}`,
+          text: `*${player.name}* ${player.emojiStatus ? " " + player.emojiStatus : ""}\n:speech_balloon: ${player.textStatus}`,
         },
       };
       blocks.push(section);
     }
   });
-
+  blocks.push({
+    type: "actions",
+    elements: [
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "botを起こす",
+        },
+        value: "get_up",
+        action_id: "get_up",
+      },
+    ],
+  });
   blocks.push({
     type: "context",
     elements: [
       {
         type: "mrkdwn",
-        text: `Last Update: ${dateTime.toLocaleTimeString(
-          "ja-JP"
-        )} ${dateTime.toLocaleDateString()}`,
+        text: `this is test... Last Update: ${dateTime.toLocaleTimeString("ja-JP")} ${dateTime.toLocaleDateString()}`,
       },
     ],
   });
+
   return blocks;
 };
 
@@ -136,9 +142,7 @@ const app = new App({
 })();
 
 // gatherのgameクラス初期化
-const game = new Game(process.env.SPACE_ID, () =>
-  Promise.resolve({ apiKey: process.env.API_KEY })
-);
+const game = new Game(process.env.SPACE_ID, () => Promise.resolve({ apiKey: process.env.API_KEY }));
 game.connect();
 game.subscribeToConnection(onConnected);
 
