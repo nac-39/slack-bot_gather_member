@@ -80,7 +80,7 @@ const generateBlocks = (playersList, timeStamp) => {
     elements: [
       {
         type: "mrkdwn",
-        text: `this is test... Last Update: ${dateTime.toLocaleTimeString("ja-JP")} ${dateTime.toLocaleDateString()}`,
+        text: `Last Update: ${dateTime.toLocaleTimeString("ja-JP")} ${dateTime.toLocaleDateString()}`,
       },
     ],
   });
