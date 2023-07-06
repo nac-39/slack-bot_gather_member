@@ -42,12 +42,6 @@ const firstPost = async () => {
     return error;
   }
 };
-// 各パーツの画像を合成してgatherのアイコンを生成する予定
-// 今は顔（髪なし）をかえすだけ
-const genImage = (outfitJson) => {
-  if (outfitJson.skin.previewUrl) return outfitJson.skin.previewUrl;
-  else return "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png";
-};
 
 // Slackを更新する時の本文を生成する
 const generateBlocks = (playersList, timeStamp) => {
@@ -59,11 +53,6 @@ const generateBlocks = (playersList, timeStamp) => {
     if (player && player.name != GATHER_BOT_NAME) {
       var section = {
         type: "section",
-        accessory: {
-          type: "image",
-          image_url: `${player.outfitString ? genImage(JSON.parse(player.outfitString)) : "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/person_ghost_01.png"}`,
-          alt_text: `${player.name}`,
-        },
         text: {
           type: "mrkdwn",
           text: `*${player.name}* ${player.emojiStatus ? " " + player.emojiStatus : ""}\n:speech_balloon: ${player.textStatus}`,
